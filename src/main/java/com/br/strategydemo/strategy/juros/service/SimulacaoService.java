@@ -11,24 +11,20 @@ import com.br.strategydemo.strategy.juros.strategy.SimuladorFinanciamento;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SimulacaoService {
 
     public SimulacaoResponse simularFinanciamentoBancario(SimulacaoRequest simulacaoRequest) {
 
-        var opcoes = new ArrayList<BancoSimulacao>();
+        var opcoesSimulacao = new ArrayList<BancoSimulacao>();
+        var bancosDisponives = List.of(new Sicredi(), new BancoRoxo(), new BancoLaranja());
 
-        var sicredi = new Sicredi();
-        opcoes.add(fazSimulacao(sicredi.getNome(), sicredi, simulacaoRequest));
-
-        var roxo = new BancoRoxo();
-        opcoes.add(fazSimulacao(roxo.getNome(), roxo, simulacaoRequest));
-
-        var laranja = new BancoLaranja();
-        opcoes.add(fazSimulacao(laranja.getNome(), laranja, simulacaoRequest));
-
-        return new SimulacaoResponse(simulacaoRequest, opcoes);
+        bancosDisponives.forEach(banco -> {
+            opcoesSimulacao.add(fazSimulacao(banco.getNome(), banco, simulacaoRequest));
+        });
+        return new SimulacaoResponse(simulacaoRequest, opcoesSimulacao);
     }
 
     private BancoSimulacao fazSimulacao(String nomeBanco, JurosStrategy strategy, SimulacaoRequest simulacaoRequest) {
